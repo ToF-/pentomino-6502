@@ -1,15 +1,41 @@
 ; test values
-    lda #$05
+    ldy #$3f
+init_test:
+    lda $fe
+    and #$0F
+    sta $a000,y
+    dey
+    bpl init_test
+
+; draw a board
+
+board:
+    ldy #$3F
+square:
+    lda $a000,y
     sta $0F
-    lda #$00
+    tya
+    pha
+    lsr
+    lsr
+    lsr
     sta $10
-    lda #$00
+    tya
+    and #$07
     sta $11
+    jsr block
+    pla
+    tay
+    dey
+    bpl square
+    rts
 
 ; draw a 4x4 pixel block on top left corner
 ; color in $OF; row in $10 col in $11
 ; block location in $12-13
 
+
+block:
     lda #$00 ; base address = $200
     sta $12
     lda #$02
@@ -63,4 +89,5 @@ pixel:
     lda $0F
     sta ($12),y
     rts
+
 
